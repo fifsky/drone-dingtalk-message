@@ -134,16 +134,15 @@ func (p *Plugin) markdownTpl() string {
 	var tpl string
 
 	//  title
-	title := fmt.Sprintf(" %s *Branch Build %s*",
-		strings.Title(p.Drone.Commit.Branch),
-		strings.Title(p.Drone.Build.Status))
+	title := fmt.Sprintf(" %s *Build %s* %s",
+		strings.Title(p.Drone.Repo.FullName),
+		strings.Title(p.Drone.Build.Status), p.getEmoticon())
 	//  with color on title
 	if p.Extra.Color.WithColor {
 		title = fmt.Sprintf("<font color=%s>%s</font>", p.getColor(), title)
 	}
 
-	tpl = fmt.Sprintf("# %s \n", title)
-
+	tpl = fmt.Sprintf("## %s \n", title)
 	// with pic
 	if p.Extra.Pic.WithPic {
 		tpl += fmt.Sprintf("![%s](%s)\n\n",
@@ -152,26 +151,20 @@ func (p *Plugin) markdownTpl() string {
 	}
 
 	//  commit message
-	commitMsg := fmt.Sprintf("%s", p.Drone.Commit.Message)
-	if p.Extra.Color.WithColor {
-		commitMsg = fmt.Sprintf("<font color=%s>%s</font>", p.getColor(), commitMsg)
+	commitSha := p.Drone.Commit.Sha
+	commitMsg := fmt.Sprintf("> %s %s %s", p.Drone.Commit.Branch, commitSha[:6], p.Drone.Commit.Message)
+	if p.Extra.LinkSha {
+		commitMsg = fmt.Sprintf("[%s](%s)", commitMsg, p.Drone.Commit.Link)
 	}
+
 	tpl += commitMsg + "\n\n"
 
-	//  sha info
-	commitSha := p.Drone.Commit.Sha
-	if p.Extra.LinkSha {
-		commitSha = fmt.Sprintf("[Click To %s Commit Detail Page](%s)", commitSha[:6], p.Drone.Commit.Link)
-	}
-	tpl += commitSha + "\n\n"
-
 	//  author info
-	authorInfo := fmt.Sprintf("`%s(%s)`", p.Drone.Commit.Authors.Name, p.Drone.Commit.Authors.Email)
+	authorInfo := fmt.Sprintf("`> Committer: %s`", p.Drone.Commit.Authors.Name)
 	tpl += authorInfo + "\n\n"
 
 	//  build detail link
-	buildDetail := fmt.Sprintf("[Click To The Build Detail Page %s](%s)",
-		p.getEmoticon(),
+	buildDetail := fmt.Sprintf("> [查看详情](%s)",
 		p.Drone.Build.Link)
 	tpl += buildDetail
 	return tpl
@@ -215,15 +208,15 @@ get emoticon
 */
 func (p *Plugin) getEmoticon() string {
 	emoticons := make(map[string]string)
-	emoticons["success"] = ":)"
-	emoticons["failure"] = ":("
+	emoticons["success"] = "😀"
+	emoticons["failure"] = "☹"
 
 	emoticon, ok := emoticons[p.Drone.Build.Status]
 	if ok {
 		return emoticon
 	}
 
-	return ":("
+	return "☹"
 }
 
 /**
@@ -232,12 +225,12 @@ get picture url
 func (p *Plugin) getPicURL() string {
 	pics := make(map[string]string)
 	//  success picture url
-	pics["success"] = "https://ws4.sinaimg.cn/large/006tNc79gy1fz05g5a7utj30he0bfjry.jpg"
+	pics["success"] = "https://static-cdn.verystar.net/s/imgs/success.png"
 	if p.Extra.Pic.SuccessPicURL != "" {
 		pics["success"] = p.Extra.Pic.SuccessPicURL
 	}
 	//  failure picture url
-	pics["failure"] = "https://ws1.sinaimg.cn/large/006tNc79gy1fz0b4fghpnj30hd0bdmxn.jpg"
+	pics["failure"] = "https://static-cdn.verystar.net/s/imgs/fail.png"
 	if p.Extra.Pic.FailurePicURL != "" {
 		pics["failure"] = p.Extra.Pic.FailurePicURL
 	}

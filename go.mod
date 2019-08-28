@@ -1,4 +1,4 @@
-module github.com/lddsb/drone-dingtalk-message
+module github.com/fifsky/drone-dingtalk-message
 
 go 1.12
 
