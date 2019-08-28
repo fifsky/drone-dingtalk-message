@@ -152,12 +152,12 @@ func (p *Plugin) markdownTpl() string {
 
 	//  commit message
 	commitSha := p.Drone.Commit.Sha
-	commitMsg := fmt.Sprintf("> %s %s %s", p.Drone.Commit.Branch, commitSha[:6], p.Drone.Commit.Message)
+	commitMsg := fmt.Sprintf("%s %s %s", p.Drone.Commit.Branch, commitSha[:6], p.Drone.Commit.Message)
 	if p.Extra.LinkSha {
 		commitMsg = fmt.Sprintf("[%s](%s)", commitMsg, p.Drone.Commit.Link)
 	}
 
-	tpl += commitMsg + "\n"
+	tpl += "> " + commitMsg + "\n"
 
 	//  author info
 	authorInfo := fmt.Sprintf("> Committer: %s`", p.Drone.Commit.Authors.Name)
