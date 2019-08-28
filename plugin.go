@@ -157,11 +157,11 @@ func (p *Plugin) markdownTpl() string {
 		commitMsg = fmt.Sprintf("[%s](%s)", commitMsg, p.Drone.Commit.Link)
 	}
 
-	tpl += commitMsg + "\n\n"
+	tpl += commitMsg + "\n"
 
 	//  author info
-	authorInfo := fmt.Sprintf("`> Committer: %s`", p.Drone.Commit.Authors.Name)
-	tpl += authorInfo + "\n\n"
+	authorInfo := fmt.Sprintf("> Committer: %s`", p.Drone.Commit.Authors.Name)
+	tpl += authorInfo + "\n"
 
 	//  build detail link
 	buildDetail := fmt.Sprintf("> [查看详情](%s)",
@@ -225,12 +225,12 @@ get picture url
 func (p *Plugin) getPicURL() string {
 	pics := make(map[string]string)
 	//  success picture url
-	pics["success"] = "https://static-cdn.verystar.net/s/imgs/success.png"
+	pics["success"] = "https://static-cdn.verystar.net/s/imgs/success.png?x-oss-process=image/resize,h_100"
 	if p.Extra.Pic.SuccessPicURL != "" {
 		pics["success"] = p.Extra.Pic.SuccessPicURL
 	}
 	//  failure picture url
-	pics["failure"] = "https://static-cdn.verystar.net/s/imgs/fail.png"
+	pics["failure"] = "https://static-cdn.verystar.net/s/imgs/fail.png?x-oss-process=image/resize,h_100"
 	if p.Extra.Pic.FailurePicURL != "" {
 		pics["failure"] = p.Extra.Pic.FailurePicURL
 	}
